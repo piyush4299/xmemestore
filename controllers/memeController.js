@@ -44,7 +44,7 @@ router.post('/',async (req,res) => {
     let meme = await memeDetail.create({
         name: req.body.name,
         caption : req.body.caption,
-        url : req.body.url
+        memeURL : req.body.memeURL
     })
     res.status(201).json({
         id : meme.id
