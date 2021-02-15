@@ -15,7 +15,7 @@ router.get('/',(req,res) => {
     memeDetail.find((err,docs) => {
         if(!err){
             // Reversed the response array to keep the recent uploaded meme on top
-            res.send(docs.reverse());
+            res.send(docs);
             logger.info("GET Request successfully done");
         }
         else{
