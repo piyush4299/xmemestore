@@ -10,11 +10,10 @@ const logger = require('./../config/logger');
 
 mongoose.set('useFindAndModify', false);
 
-
+// GET request to get all the data present in database
 router.get('/',(req,res) => {
     memeDetail.find((err,docs) => {
         if(!err){
-            // Reversed the response array to keep the recent uploaded meme on top
             res.send(docs);
             logger.info("GET Request successfully done");
         }
@@ -27,15 +26,17 @@ router.get('/',(req,res) => {
 
 
 router.post('/',async (req,res) => {
+    // It is compulsory to pass all parameters to request
     if(!req.body.name || !req.body.caption || !req.body.memeURL){
         res.status('400').json({
             message: 'All parameters should be mentioned'
         })
         return;
     }
-    let duplicateMeme = await memeDetail.findOne({name: req.body.name, caption : req.body.caption, url : req.body.url})
+    // To check if duplicate meme is already present or not.
+    let duplicateMeme = await memeDetail.findOne({name: req.body.name, caption : req.body.caption, memeURL : req.body.memeURL});
     if(duplicateMeme){
-        res.status(201).json({
+        res.status(409).json({
             "message": 'Duplicate document/meme already present'
         })
         return;
@@ -46,7 +47,8 @@ router.post('/',async (req,res) => {
         caption : req.body.caption,
         memeURL : req.body.memeURL
     })
-    res.status(201).json({
+    // Returning the id of posted meme as response(could be seen in postman)
+    res.status(200).json({
         id : meme.id
     });
   
@@ -57,6 +59,7 @@ router.patch('/:id',async(req,res,next) => {
     var updatedObject = req.body; 
     var id = req.params.id;
     try{
+        // finding the id and updating the document
         const responseMeme = await memeDetail.findByIdAndUpdate({_id  : ObjectId(id)},{ $set : updatedObject },{ new : true});
         if(!responseMeme){
             throw createError(404, 'Meme does not exist');
@@ -79,6 +82,7 @@ router.patch('/:id',async(req,res,next) => {
 
 router.delete('/:id',async(req,res,next) => {
     try{
+        // finding by ID and removing the document
         const responseMeme = await memeDetail.findByIdAndRemove(req.params.id);
         if(!responseMeme){
             throw createError(404, 'Meme does not exist');

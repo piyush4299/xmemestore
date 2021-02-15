@@ -44,5 +44,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
+// Server listening to port assigned
 app.listen(PORT,() => logger.info("Backend Serve is ready to listen"));
 
